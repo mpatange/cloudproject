@@ -43,7 +43,7 @@ resource "aws_instance" "django-app" {
   security_groups = [aws_security_group.allow_web.name]
 
   tags = {
-    Name = "MISCloud_djangoApp"
+    Name = "MISCloud_djangoAppMovieRecommender"
   }
   
   user_data = <<-EOF
