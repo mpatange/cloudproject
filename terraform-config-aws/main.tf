@@ -41,10 +41,10 @@ resource "aws_instance" "django-app" {
   ami           = data.aws_ami.latest_amazon_linux.id
   instance_type = "t2.micro"
   security_groups = [aws_security_group.allow_web.name]
-  key_name      = "cloudapp-key" 
+  key_name      = "django-key" 
 
   tags = {
-    Name = "mis547_terraform"
+    Name = "mis547_djangoApp"
   }
   
   user_data = <<-EOF
@@ -55,13 +55,7 @@ resource "aws_instance" "django-app" {
                 sudo docker pull mpatange/cloudproject:django-app:latest
                 sudo docker run -d -p 80:8000 mpatange/cloudproject:django-app:latest
                 EOF
-
-  connection {
-    type        = "ssh"
-    user        = "ec2-user"
-    private_key = file("${path.module}/cloudapp-key.pem")
-    host        = self.public_ip
-  }
+				
 }
 
 output "public_ip" {
