@@ -1,0 +1,26 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main  # This workflow triggers on pushes to the main branch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest  # The type of runner that the job will run on
+
+    steps:
+    - name: Check Out Repository
+      uses: actions/checkout@v2  # Checks-out your repository under $GITHUB_WORKSPACE
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1  # Logs in to Docker Hub
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}  # Docker Hub username
+        password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}  # Docker Hub token
+
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v2  # Builds and pushes the Docker image
+      with:
+        push: true
+        tags: mpatange/django-app:latest  # Replace with your Docker Hub username and image repository name
