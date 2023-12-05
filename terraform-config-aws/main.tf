@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"  # Set the AWS region
+  region = "us-west-2"
 }
 
 data "aws_ami" "latest_amazon_linux" {
@@ -7,43 +7,23 @@ data "aws_ami" "latest_amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]  # Filter for the Amazon Linux AMI
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
   }
 
   filter {
     name   = "virtualization-type"
-    values = ["hvm"]  # Specify the virtualization type
+    values = ["hvm"]
   }
 
-  owners = ["amazon"]  # Specify the owner of the AMI
-}
-
-resource "aws_security_group" "allow_web" {
-  name        = "allow_web_traffic"
-  description = "Allow web inbound traffic"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  owners = ["amazon"]
 }
 
 resource "aws_instance" "django-app" {
   ami           = data.aws_ami.latest_amazon_linux.id
   instance_type = "t2.micro"
-  security_groups = [aws_security_group.allow_web.name]
 
   tags = {
-    Name = "MISCloud_djangoAppMovieRecommender"
+    Name = "MIS547_MovieRecommender"
   }
   
   user_data = <<-EOF
@@ -51,11 +31,11 @@ resource "aws_instance" "django-app" {
                 sudo yum update -y
                 sudo yum install -y docker
                 sudo service docker start
-                sudo docker pull mpatange/cloudproject:django-app:latest
-                sudo docker run -d -p 80:8000 mpatange/cloudproject:django-app:latest
+                sudo docker pull mpatange/movie-app:latest
+                sudo docker run -d -p 80:8000 mpatange/movie-app:latest
                 EOF
-				
-				 connection {
+
+  connection {
     type        = "ssh"
     user        = "ec2-user"
     private_key = file("${path.module}/django-key.pem")
